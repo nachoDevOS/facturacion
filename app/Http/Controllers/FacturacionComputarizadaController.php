@@ -13,7 +13,7 @@ class FacturacionComputarizadaController extends Controller
         $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
         $header = array(
             'http' => array(
-                'header' => "apikey: TokenApi eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdmlsbmV0QGhvdG1haWwuY29tIiwiY29kaWdvU2lzdGVtYSI6IjM3MUEwNjAwNEJCQTBDQzlERjFFIiwibml0IjoiSDRzSUFBQUFBQUFBQURNeE1qRTNNRFF5TUxRQUFEYVlPLVlLQUFBQSIsImlkIjo1NzI2MDE0LCJleHAiOjE3NzE2MjA3NDQsImlhdCI6MTc3MDc3MTExNSwibml0RGVsZWdhZG8iOjQyNDcwMTIwMTgsInN1YnNpc3RlbWEiOiJTRkUifQ.kziCtAaFI-mqgHbKsZwnEp5XRm8SPId6oO7cfJlwXCemIfK3x2e2WJKhMx1WpfKyiu3nxW3cqZR-mMxCoBEOvA",
+                'header' => "apikey: TokenApi eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpZ25hY2lvbW9saW5hZ3V6bWFuMjBAZ21haWwuY29tIiwiY29kaWdvU2lzdGVtYSI6IjIyNzA5OUFGQkFGNDBBQTI5NjJGNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFETTNNelkyc3pBMU1EUUZBRnVhUlpZS0FBQUEiLCJpZCI6NTE5OTc4MSwiZXhwIjoxNzgyNzgzNTExLCJpYXQiOjE3NzE3Mzg2ODEsIm5pdERlbGVnYWRvIjo3NjMzNjg1MDE1LCJzdWJzaXN0ZW1hIjoiU0ZFIn0.ZIwCT8p79PQ-llkjcFAQsG5kwr0NKI0tFgPb2FdL7l4AIVXL4ET7oDva8RYfrb1kHAPyYfupnxg0rltWT8C15g",
                 'timeout' => 5
             )
         );
