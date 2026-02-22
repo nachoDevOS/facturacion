@@ -45,6 +45,39 @@ El servicio devuelve la respuesta directa del SOAP del SIAT convertida a JSON:
 - **Autenticación SIAT:** Utiliza un `apikey` en el header del stream context para la conexión SOAP.
 - **Manejo de Errores:** Si falla la conexión SOAP, el endpoint retornará el objeto `SoapFault` serializado con los detalles del error.
 
+### 2. Obtener CUIS
+
+Solicita el Código Único de Inicio de Sistemas (CUIS), necesario para solicitar el CUFD y emitir facturas.
+
+* **URL:** `/api/siat/cuis`
+* **Método:** `GET`
+* **Controlador:** `FacturacionComputarizadaController@cuis`
+
+### 3. Obtener CUFD
+
+Solicita el Código Único de Facturación Diaria (CUFD). Este código cambia cada 24 horas y es indispensable para la emisión de facturas.
+*Nota: El controlador gestiona internamente la obtención del CUIS necesario para esta petición.*
+
+* **URL:** `/api/siat/cufd`
+* **Método:** `GET`
+* **Controlador:** `FacturacionComputarizadaController@cufd`
+
+### 4. Sincronizar Actividades
+
+Obtiene el catálogo de actividades económicas habilitadas por el SIN para el contribuyente.
+
+* **URL:** `/api/siat/sincronizar-actividades`
+* **Método:** `GET`
+* **Controlador:** `FacturacionComputarizadaController@sincronizarActividades`
+
+### 5. Sincronizar Leyendas de Factura
+
+Descarga la lista de leyendas obligatorias que deben imprimirse aleatoriamente en las facturas.
+
+* **URL:** `/api/siat/sincronizar-lista-leyendas-factura`
+* **Método:** `GET`
+* **Controlador:** `FacturacionComputarizadaController@sincronizarListaLeyendasFactura`
+
 ## ⚠️ Requisitos del Sistema
 
 Para que la comunicación con el SIAT funcione, es indispensable tener habilitada la extensión **SOAP** en el servidor PHP.
