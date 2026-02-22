@@ -33,7 +33,7 @@ class FacturacionComputarizadaController extends Controller
         $contexto = stream_context_create($header);
 
         try {
-            $cliente = new \SoapClient(
+            $cliente = new SoapClient(
                 $wsdl,
                 [
                     'stream_context' => $contexto,
