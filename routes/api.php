@@ -22,3 +22,10 @@ Route::get('/siat/cuis', [FacturacionComputarizadaController::class, 'cuis']);
 Route::get('/siat/cufd', [FacturacionComputarizadaController::class, 'cufd']);
 Route::get('/siat/sincronizar-actividades', [FacturacionComputarizadaController::class, 'sincronizarActividades']);
 Route::get('/siat/sincronizar-lista-leyendas-factura', [FacturacionComputarizadaController::class, 'sincronizarListaLeyendasFactura']);
+Route::get('/siat/sincronizar-lista-productos-servicios', [FacturacionComputarizadaController::class, 'sincronizarListaProductosServicios']);
+Route::get('/siat/sincronizar-parametrica-unidad-medida', [FacturacionComputarizadaController::class, 'sincronizarParametricaUnidadMedida']);
+Route::get('/siat/sincronizar-parametrica-tipo-documento-identidad', [FacturacionComputarizadaController::class, 'sincronizarParametricaTipoDocumentoIdentidad']);
+Route::get('/siat/sincronizar-parametrica-tipo-metodo-pago', [FacturacionComputarizadaController::class, 'sincronizarParametricaTipoMetodoPago']);
+
+
+

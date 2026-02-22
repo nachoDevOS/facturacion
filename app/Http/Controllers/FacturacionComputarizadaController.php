@@ -208,5 +208,224 @@ class FacturacionComputarizadaController extends Controller
         return $resultado;
     }
 
+    public function sincronizarListaProductosServicios(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarListaProductosServicios($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+    public function sincronizarParametricaUnidadMedida(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarParametricaUnidadMedida($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+    public function sincronizarParametricaTipoDocumentoIdentidad(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarParametricaTipoDocumentoIdentidad($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+    public function sincronizarParametricaTipoMetodoPago(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarParametricaTipoMetodoPago($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+    public function recepcionFactura($archivo,$fechaEnvio,$hashArchivo){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/ServicioFacturacionCompraVenta?wsdl";
+ 
+        $codigoDocumentoSector=1;
+        $codigoEmision=1;
+  
+
+        $cufd = $this->cufd()->RespuestaCufd->codigo;
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+    
+        $tipoFacturaDocumento=1;
+        $archivo = $archivo;
+        $fechaEnvio = $fechaEnvio;
+        $hashArchivo = $hashArchivo;
+
+        $parametros = array(
+            'SolicitudServicioRecepcionFactura' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoDocumentoSector' => $codigoDocumentoSector,
+                'codigoEmision' => $codigoEmision,
+                'codigoModalidad' => $this->codigoModalidad,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cufd' => $cufd,
+                'cuis' => $cuis,
+                'nit' => $this->nit,
+                'tipoFacturaDocumento' => $tipoFacturaDocumento,
+                'archivo' => $archivo,
+                'fechaEnvio' => $fechaEnvio,
+                'hashArchivo' => $hashArchivo
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE,
+                    'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE
+                ]
+            );
+            $resultado = $cliente->recepcionFactura($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
 
 }
