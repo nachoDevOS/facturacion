@@ -18,3 +18,5 @@ Route::get('/status', function () {
 
 // Endpoints de Facturación Computarizada (SIAT)
 Route::get('/siat/verificar-comunicacion', [FacturacionComputarizadaController::class, 'verificarComunicacion']);
+Route::get('/siat/cuis', [FacturacionComputarizadaController::class, 'cuis']);
+Route::get('/siat/cufd', [FacturacionComputarizadaController::class, 'cufd']);

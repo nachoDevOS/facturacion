@@ -44,3 +44,12 @@ El servicio devuelve la respuesta directa del SOAP del SIAT convertida a JSON:
 - **Protocolo Upstream:** SOAP (WSDL).
 - **Autenticación SIAT:** Utiliza un `apikey` en el header del stream context para la conexión SOAP.
 - **Manejo de Errores:** Si falla la conexión SOAP, el endpoint retornará el objeto `SoapFault` serializado con los detalles del error.
+
+## ⚠️ Requisitos del Sistema
+
+Para que la comunicación con el SIAT funcione, es indispensable tener habilitada la extensión **SOAP** en el servidor PHP.
+
+### Solución a `Class "SoapClient" not found`
+* **Ubuntu/Debian:** Ejecutar `sudo apt-get install php-soap` y reiniciar el servidor web.
+* **Docker:** Agregar `RUN docker-php-ext-install soap` en el Dockerfile.
+* **php.ini:** Asegurarse de que `extension=soap` no esté comentado.
