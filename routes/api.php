@@ -20,3 +20,5 @@ Route::get('/status', function () {
 Route::get('/siat/verificar-comunicacion', [FacturacionComputarizadaController::class, 'verificarComunicacion']);
 Route::get('/siat/cuis', [FacturacionComputarizadaController::class, 'cuis']);
 Route::get('/siat/cufd', [FacturacionComputarizadaController::class, 'cufd']);
+Route::get('/siat/sincronizar-actividades', [FacturacionComputarizadaController::class, 'sincronizarActividades']);
+Route::get('/siat/sincronizar-lista-leyendas-factura', [FacturacionComputarizadaController::class, 'sincronizarListaLeyendasFactura']);

@@ -128,5 +128,85 @@ class FacturacionComputarizadaController extends Controller
         return $resultado;
     }
 
-    
+    public function sincronizarActividades(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarActividades($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+    public function sincronizarListaLeyendasFactura(){
+        $wsdl="https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+
+        $cuis = $this->cuis()->RespuestaCuis->codigo;
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $this->codigoAmbiente,
+                'codigoPuntoVenta' => $this->codigoPuntoVenta,
+                'codigoSistema' => $this->codigoSistema,
+                'codigoSucursal' => $this->codigoSucursal,
+                'cuis' => $cuis,
+                'nit' => $this->nit
+            )
+        );
+
+        $header = array(
+            'http' => array(
+                'header' => "apikey: TokenApi ".$this->token,
+                'timeout' => 5
+            )
+        );
+
+        $contexto = stream_context_create($header);
+
+        try {
+            $cliente = new SoapClient(
+                $wsdl,
+                [
+                    'stream_context' => $contexto,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                ]
+            );
+            $resultado = $cliente->sincronizarListaLeyendasFactura($parametros);
+        } catch (SoapFault $e) {
+            $resultado = $e;
+        }
+        return $resultado;
+    }
+
+
 }
