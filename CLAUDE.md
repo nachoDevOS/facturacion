@@ -1,13 +1,60 @@
+# CLAUDE.md
+
+Este archivo proporciona orientación a Claude Code (claude.ai/code) cuando trabaja con el código de este repositorio.
+
+## Descripción del Proyecto
+
+**AxonBill** es una API REST en Laravel 12 que se integra con los servicios web SOAP del SIAT (Sistema de Administración de Impuestos) de Bolivia para la Facturación Computarizada. Se comunica con los endpoints SOAP del entorno piloto de impuestos (`pilotosiatservicios.impuestos.gob.bo`).
+
+## Comandos
+
+```bash
+# Iniciar todos los servicios (servidor, cola, logs, vite)
+composer run dev
+
+# Ejecutar todos los tests
+php artisan test --compact
+
+# Ejecutar un test específico
+php artisan test --compact --filter=NombreDelTest
+
+# Formatear código PHP tras cualquier cambio
+vendor/bin/pint --dirty --format agent
+
+# Configuración inicial
+composer run setup
+```
+
+## Arquitectura
+
+### Integración con SIAT
+
+Toda la comunicación con el SIAT se encuentra en [app/Http/Controllers/FacturacionComputarizadaController.php](app/Http/Controllers/FacturacionComputarizadaController.php). Usa `SoapClient` de PHP con un encabezado HTTP `apikey`. El controlador contiene credenciales fijas (`$token`, `$codigoSistema`, `$nit`, etc.) que identifican al sistema de facturación.
+
+El flujo de la API SIAT es secuencial:
+1. **CUIS** — Obtener código de sesión vía WSDL `FacturacionCodigos`
+2. **CUFD** — Obtener código diario (requiere CUIS)
+3. **Sincronización** — Sincronizar datos paramétricos (actividades, productos, métodos de pago, etc.) vía WSDL `FacturacionSincronizacion`
+4. **recepcionFactura** — Enviar XML de factura (requiere CUIS y CUFD) vía WSDL `ServicioFacturacionCompraVenta`
+
+### Rutas
+
+Las rutas de la API (`routes/api.php`) están bajo el prefijo `/api/siat/*` (sin middleware de autenticación por el momento). Las rutas web (`routes/web.php`) solo sirven la vista de bienvenida.
+
+### Base de Datos
+
+Solo existen las tablas predeterminadas de Laravel (users, cache, jobs, personal_access_tokens). Aún no hay modelos de dominio.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
-# Laravel Boost Guidelines
+# Directrices de Laravel Boost
 
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel applications.
+Las directrices de Laravel Boost están curadas específicamente por los mantenedores de Laravel para esta aplicación. Deben seguirse de cerca para garantizar la mejor experiencia al construir aplicaciones Laravel.
 
-## Foundational Context
+## Contexto Base
 
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
+Esta aplicación es una aplicación Laravel y sus principales paquetes del ecosistema Laravel y versiones son los siguientes. Eres experto en todos ellos. Asegúrate de respetar estos paquetes y versiones específicos.
 
 - php - 8.2.30
 - laravel/framework (LARAVEL) - v12
@@ -22,98 +69,98 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - phpunit/phpunit (PHPUNIT) - v11
 - tailwindcss (TAILWINDCSS) - v4
 
-## Skills Activation
+## Activación de Skills
 
-This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
+Este proyecto tiene skills específicos disponibles. DEBES activar el skill relevante cada vez que trabajes en ese dominio — no esperes hasta que estés bloqueado.
 
-- `pest-testing` — Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
-- `tailwindcss-development` — Styles applications using Tailwind CSS v4 utilities. Activates when adding styles, restyling components, working with gradients, spacing, layout, flex, grid, responsive design, dark mode, colors, typography, or borders; or when the user mentions CSS, styling, classes, Tailwind, restyle, hero section, cards, buttons, or any visual/UI changes.
+- `pest-testing` — Testea aplicaciones con el framework Pest 3 de PHP. Se activa al escribir tests, crear tests unitarios o de feature, agregar aserciones, testear componentes Livewire, tests de arquitectura, depurar fallos en tests, trabajar con datasets o mocking; o cuando el usuario menciona test, spec, TDD, expects, assertion, coverage, o necesita verificar que algo funciona.
+- `tailwindcss-development` — Estiliza aplicaciones con utilidades de Tailwind CSS v4. Se activa al agregar estilos, rediseñar componentes, trabajar con gradientes, espaciado, layout, flex, grid, diseño responsivo, modo oscuro, colores, tipografía o bordes; o cuando el usuario menciona CSS, estilos, clases, Tailwind, rediseñar, hero section, tarjetas, botones o cualquier cambio visual/UI.
 
-## Conventions
+## Convenciones
 
-- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
-- Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
-- Check for existing components to reuse before writing a new one.
+- Debes seguir todas las convenciones de código existentes en esta aplicación. Al crear o editar un archivo, revisa los archivos hermanos para conocer la estructura, enfoque y nomenclatura correctos.
+- Usa nombres descriptivos para variables y métodos. Por ejemplo, `isRegisteredForDiscounts`, no `discount()`.
+- Verifica si existen componentes reutilizables antes de escribir uno nuevo.
 
-## Verification Scripts
+## Scripts de Verificación
 
-- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
+- No crees scripts de verificación ni uses tinker cuando los tests cubran esa funcionalidad y demuestren que funciona. Los tests unitarios y de feature son más importantes.
 
-## Application Structure & Architecture
+## Estructura y Arquitectura de la Aplicación
 
-- Stick to existing directory structure; don't create new base folders without approval.
-- Do not change the application's dependencies without approval.
+- Mantén la estructura de directorios existente; no crees nuevas carpetas base sin aprobación.
+- No cambies las dependencias de la aplicación sin aprobación.
 
-## Frontend Bundling
+## Empaquetado Frontend
 
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+- Si el usuario no ve un cambio de frontend reflejado en la UI, podría significar que necesita ejecutar `npm run build`, `npm run dev` o `composer run dev`. Pregúntale.
 
-## Documentation Files
+## Archivos de Documentación
 
-- You must only create documentation files if explicitly requested by the user.
+- Solo debes crear archivos de documentación si el usuario lo solicita explícitamente.
 
-## Replies
+## Respuestas
 
-- Be concise in your explanations - focus on what's important rather than explaining obvious details.
+- Sé conciso en tus explicaciones — enfócate en lo importante en lugar de explicar detalles obvios.
 
 === boost rules ===
 
 # Laravel Boost
 
-- Laravel Boost is an MCP server that comes with powerful tools designed specifically for this application. Use them.
+- Laravel Boost es un servidor MCP que viene con herramientas potentes diseñadas específicamente para esta aplicación. Úsalas.
 
 ## Artisan
 
-- Use the `list-artisan-commands` tool when you need to call an Artisan command to double-check the available parameters.
+- Usa la herramienta `list-artisan-commands` cuando necesites llamar un comando Artisan para verificar los parámetros disponibles.
 
 ## URLs
 
-- Whenever you share a project URL with the user, you should use the `get-absolute-url` tool to ensure you're using the correct scheme, domain/IP, and port.
+- Cada vez que compartas una URL del proyecto con el usuario, debes usar la herramienta `get-absolute-url` para asegurarte de usar el esquema, dominio/IP y puerto correctos.
 
-## Tinker / Debugging
+## Tinker / Depuración
 
-- You should use the `tinker` tool when you need to execute PHP to debug code or query Eloquent models directly.
-- Use the `database-query` tool when you only need to read from the database.
-- Use the `database-schema` tool to inspect table structure before writing migrations or models.
+- Debes usar la herramienta `tinker` cuando necesites ejecutar PHP para depurar código o consultar modelos Eloquent directamente.
+- Usa la herramienta `database-query` cuando solo necesites leer de la base de datos.
+- Usa la herramienta `database-schema` para inspeccionar la estructura de tablas antes de escribir migraciones o modelos.
 
-## Reading Browser Logs With the `browser-logs` Tool
+## Leer Logs del Navegador con la Herramienta `browser-logs`
 
-- You can read browser logs, errors, and exceptions using the `browser-logs` tool from Boost.
-- Only recent browser logs will be useful - ignore old logs.
+- Puedes leer logs, errores y excepciones del navegador usando la herramienta `browser-logs` de Boost.
+- Solo los logs recientes del navegador serán útiles — ignora los logs antiguos.
 
-## Searching Documentation (Critically Important)
+## Buscar Documentación (Críticamente Importante)
 
-- Boost comes with a powerful `search-docs` tool you should use before trying other approaches when working with Laravel or Laravel ecosystem packages. This tool automatically passes a list of installed packages and their versions to the remote Boost API, so it returns only version-specific documentation for the user's circumstance. You should pass an array of packages to filter on if you know you need docs for particular packages.
-- Search the documentation before making code changes to ensure we are taking the correct approach.
-- Use multiple, broad, simple, topic-based queries at once. For example: `['rate limiting', 'routing rate limiting', 'routing']`. The most relevant results will be returned first.
-- Do not add package names to queries; package information is already shared. For example, use `test resource table`, not `filament 4 test resource table`.
+- Boost incluye una poderosa herramienta `search-docs` que debes usar antes de probar otros enfoques cuando trabajes con Laravel o paquetes del ecosistema Laravel. Esta herramienta pasa automáticamente una lista de paquetes instalados y sus versiones a la API remota de Boost, por lo que devuelve solo documentación específica de versión para la situación del usuario. Debes pasar un array de paquetes para filtrar si sabes que necesitas documentación de paquetes particulares.
+- Busca en la documentación antes de hacer cambios en el código para asegurarte de tomar el enfoque correcto.
+- Usa múltiples consultas amplias, simples y basadas en temas a la vez. Por ejemplo: `['rate limiting', 'routing rate limiting', 'routing']`. Los resultados más relevantes se devolverán primero.
+- No agregues nombres de paquetes a las consultas; la información del paquete ya se comparte. Por ejemplo, usa `test resource table`, no `filament 4 test resource table`.
 
-### Available Search Syntax
+### Sintaxis de Búsqueda Disponible
 
-1. Simple Word Searches with auto-stemming - query=authentication - finds 'authenticate' and 'auth'.
-2. Multiple Words (AND Logic) - query=rate limit - finds knowledge containing both "rate" AND "limit".
-3. Quoted Phrases (Exact Position) - query="infinite scroll" - words must be adjacent and in that order.
-4. Mixed Queries - query=middleware "rate limit" - "middleware" AND exact phrase "rate limit".
-5. Multiple Queries - queries=["authentication", "middleware"] - ANY of these terms.
+1. Búsquedas de palabras simples con auto-stemming - query=authentication - encuentra 'authenticate' y 'auth'.
+2. Múltiples palabras (lógica AND) - query=rate limit - encuentra conocimiento que contenga tanto "rate" COMO "limit".
+3. Frases exactas (posición exacta) - query="infinite scroll" - las palabras deben ser adyacentes y en ese orden.
+4. Consultas mixtas - query=middleware "rate limit" - "middleware" Y la frase exacta "rate limit".
+5. Múltiples consultas - queries=["authentication", "middleware"] - CUALQUIERA de estos términos.
 
 === php rules ===
 
 # PHP
 
-- Always use curly braces for control structures, even for single-line bodies.
+- Siempre usa llaves para las estructuras de control, incluso para cuerpos de una sola línea.
 
-## Constructors
+## Constructores
 
-- Use PHP 8 constructor property promotion in `__construct()`.
+- Usa promoción de propiedades en el constructor de PHP 8 en `__construct()`.
     - `public function __construct(public GitHub $github) { }`
-- Do not allow empty `__construct()` methods with zero parameters unless the constructor is private.
+- No permitas métodos `__construct()` vacíos con cero parámetros a menos que el constructor sea privado.
 
-## Type Declarations
+## Declaraciones de Tipo
 
-- Always use explicit return type declarations for methods and functions.
-- Use appropriate PHP type hints for method parameters.
+- Siempre usa declaraciones de tipo de retorno explícitas para métodos y funciones.
+- Usa tipos de PHP apropiados para los parámetros de los métodos.
 
-<!-- Explicit Return Types and Method Params -->
+<!-- Tipos de Retorno Explícitos y Parámetros de Métodos -->
 ```php
 protected function isAccessible(User $user, ?string $path = null): bool
 {
@@ -123,119 +170,119 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Enums
 
-- Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
+- Normalmente, las claves en un Enum deben ser TitleCase. Por ejemplo: `FavoritePerson`, `BestLake`, `Monthly`.
 
-## Comments
+## Comentarios
 
-- Prefer PHPDoc blocks over inline comments. Never use comments within the code itself unless the logic is exceptionally complex.
+- Prefiere bloques PHPDoc sobre comentarios en línea. Nunca uses comentarios dentro del código a menos que la lógica sea excepcionalmente compleja.
 
-## PHPDoc Blocks
+## Bloques PHPDoc
 
-- Add useful array shape type definitions when appropriate.
+- Agrega definiciones de tipo de forma de array útiles cuando sea apropiado.
 
 === laravel/core rules ===
 
-# Do Things the Laravel Way
+# Haz las Cosas a la Manera de Laravel
 
-- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
-- If you're creating a generic PHP class, use `php artisan make:class`.
-- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
+- Usa comandos `php artisan make:` para crear nuevos archivos (migraciones, controladores, modelos, etc.). Puedes listar los comandos Artisan disponibles usando la herramienta `list-artisan-commands`.
+- Si estás creando una clase PHP genérica, usa `php artisan make:class`.
+- Pasa `--no-interaction` a todos los comandos Artisan para asegurarte de que funcionen sin entrada del usuario. También debes pasar las `--options` correctas para garantizar el comportamiento correcto.
 
-## Database
+## Base de Datos
 
-- Always use proper Eloquent relationship methods with return type hints. Prefer relationship methods over raw queries or manual joins.
-- Use Eloquent models and relationships before suggesting raw database queries.
-- Avoid `DB::`; prefer `Model::query()`. Generate code that leverages Laravel's ORM capabilities rather than bypassing them.
-- Generate code that prevents N+1 query problems by using eager loading.
-- Use Laravel's query builder for very complex database operations.
+- Siempre usa métodos de relación Eloquent adecuados con tipos de retorno. Prefiere los métodos de relación sobre consultas crudas o joins manuales.
+- Usa modelos Eloquent y relaciones antes de sugerir consultas de base de datos crudas.
+- Evita `DB::`; prefiere `Model::query()`. Genera código que aproveche las capacidades ORM de Laravel en lugar de eludirlas.
+- Genera código que prevenga problemas de consultas N+1 usando eager loading.
+- Usa el query builder de Laravel para operaciones de base de datos muy complejas.
 
-### Model Creation
+### Creación de Modelos
 
-- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `list-artisan-commands` to check the available options to `php artisan make:model`.
+- Al crear nuevos modelos, crea también factories y seeders útiles. Pregunta al usuario si necesita otras cosas, usando `list-artisan-commands` para verificar las opciones disponibles en `php artisan make:model`.
 
-### APIs & Eloquent Resources
+### APIs y Recursos Eloquent
 
-- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
+- Para APIs, usa por defecto Recursos API Eloquent y versionado de API, a menos que las rutas API existentes no lo hagan; en ese caso, sigue la convención existente de la aplicación.
 
-## Controllers & Validation
+## Controladores y Validación
 
-- Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
-- Check sibling Form Requests to see if the application uses array or string based validation rules.
+- Siempre crea clases Form Request para la validación en lugar de validación en línea en los controladores. Incluye tanto reglas de validación como mensajes de error personalizados.
+- Revisa los Form Requests hermanos para ver si la aplicación usa reglas de validación basadas en arrays o en strings.
 
-## Authentication & Authorization
+## Autenticación y Autorización
 
-- Use Laravel's built-in authentication and authorization features (gates, policies, Sanctum, etc.).
+- Usa las funcionalidades de autenticación y autorización integradas de Laravel (gates, policies, Sanctum, etc.).
 
-## URL Generation
+## Generación de URLs
 
-- When generating links to other pages, prefer named routes and the `route()` function.
+- Al generar enlaces a otras páginas, prefiere rutas con nombre y la función `route()`.
 
-## Queues
+## Colas
 
-- Use queued jobs for time-consuming operations with the `ShouldQueue` interface.
+- Usa jobs en cola para operaciones que consumen mucho tiempo con la interfaz `ShouldQueue`.
 
-## Configuration
+## Configuración
 
-- Use environment variables only in configuration files - never use the `env()` function directly outside of config files. Always use `config('app.name')`, not `env('APP_NAME')`.
+- Usa variables de entorno solo en archivos de configuración — nunca uses la función `env()` directamente fuera de los archivos de configuración. Siempre usa `config('app.name')`, no `env('APP_NAME')`.
 
 ## Testing
 
-- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
-- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+- Al crear modelos para tests, usa las factories de los modelos. Verifica si la factory tiene estados personalizados que se puedan usar antes de configurar el modelo manualmente.
+- Faker: Usa métodos como `$this->faker->word()` o `fake()->randomDigit()`. Sigue las convenciones existentes sobre si usar `$this->faker` o `fake()`.
+- Al crear tests, usa `php artisan make:test [options] {name}` para crear un test de feature, y pasa `--unit` para crear un test unitario. La mayoría de los tests deben ser tests de feature.
 
-## Vite Error
+## Error de Vite
 
-- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+- Si recibes un error "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest", puedes ejecutar `npm run build` o pedir al usuario que ejecute `npm run dev` o `composer run dev`.
 
 === laravel/v12 rules ===
 
 # Laravel 12
 
-- CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
-- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
+- CRÍTICO: SIEMPRE usa la herramienta `search-docs` para documentación de Laravel específica de la versión y ejemplos de código actualizados.
+- Desde Laravel 11, Laravel tiene una nueva estructura de archivos simplificada que este proyecto usa.
 
-## Laravel 12 Structure
+## Estructura de Laravel 12
 
-- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
-- Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
-- `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
-- `bootstrap/providers.php` contains application specific service providers.
-- The `app\Console\Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
-- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
+- En Laravel 12, el middleware ya no se registra en `app/Http/Kernel.php`.
+- El middleware se configura declarativamente en `bootstrap/app.php` usando `Application::configure()->withMiddleware()`.
+- `bootstrap/app.php` es el archivo para registrar middleware, excepciones y archivos de routing.
+- `bootstrap/providers.php` contiene los service providers específicos de la aplicación.
+- El archivo `app\Console\Kernel.php` ya no existe; usa `bootstrap/app.php` o `routes/console.php` para la configuración de consola.
+- Los comandos de consola en `app/Console/Commands/` están disponibles automáticamente y no requieren registro manual.
 
-## Database
+## Base de Datos
 
-- When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+- Al modificar una columna, la migración debe incluir todos los atributos que se definieron previamente en la columna. De lo contrario, se eliminarán y perderán.
+- Laravel 12 permite limitar registros cargados con eager loading de forma nativa, sin paquetes externos: `$query->latest()->limit(10);`.
 
-### Models
+### Modelos
 
-- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
+- Los casts pueden y probablemente deberían definirse en un método `casts()` en el modelo en lugar de en la propiedad `$casts`. Sigue las convenciones existentes de otros modelos.
 
 === pint/core rules ===
 
-# Laravel Pint Code Formatter
+# Formateador de Código Laravel Pint
 
-- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
+- Si has modificado algún archivo PHP, debes ejecutar `vendor/bin/pint --dirty --format agent` antes de finalizar los cambios para asegurarte de que tu código coincida con el estilo esperado del proyecto.
+- No ejecutes `vendor/bin/pint --test --format agent`, simplemente ejecuta `vendor/bin/pint --format agent` para corregir cualquier problema de formato.
 
 === pest/core rules ===
 
 ## Pest
 
-- This project uses Pest for testing. Create tests: `php artisan make:test --pest {name}`.
-- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
-- Do NOT delete tests without approval.
-- CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
-- IMPORTANT: Activate `pest-testing` every time you're working with a Pest or testing-related task.
+- Este proyecto usa Pest para testing. Crea tests: `php artisan make:test --pest {name}`.
+- Ejecuta tests: `php artisan test --compact` o filtra: `php artisan test --compact --filter=nombreDelTest`.
+- NO elimines tests sin aprobación.
+- CRÍTICO: SIEMPRE usa la herramienta `search-docs` para documentación de Pest específica de la versión y ejemplos de código actualizados.
+- IMPORTANTE: Activa `pest-testing` cada vez que trabajes con una tarea relacionada con Pest o testing.
 
 === tailwindcss/core rules ===
 
 # Tailwind CSS
 
-- Always use existing Tailwind conventions; check project patterns before adding new ones.
-- IMPORTANT: Always use `search-docs` tool for version-specific Tailwind CSS documentation and updated code examples. Never rely on training data.
-- IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
+- Siempre usa las convenciones Tailwind existentes; verifica los patrones del proyecto antes de agregar nuevos.
+- IMPORTANTE: Siempre usa la herramienta `search-docs` para documentación de Tailwind CSS específica de la versión y ejemplos de código actualizados. Nunca dependas de los datos de entrenamiento.
+- IMPORTANTE: Activa `tailwindcss-development` cada vez que trabajes con una tarea relacionada con Tailwind CSS o estilos.
 
 </laravel-boost-guidelines>
